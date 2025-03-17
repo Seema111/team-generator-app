@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { FaUsers, FaHome, FaSearch } from "react-icons/fa";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,11 +12,36 @@ export default function Navbar() {
   return (
     <nav className="fixed top-[2%] left-1/2 transform -translate-x-1/2 w-[70%] bg-[#f0f0f0] shadow-lg z-50 rounded-lg">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-xl font-bold text-[#0070f3]">
+        <div className="text-xl font-bold text-[#6366f1] flex items-center space-x-2">
+          <FaUsers className="text-2xl" />
           <Link href="/" onClick={closeMenu}>
             TeamGenerator
           </Link>
         </div>
+
+        <ul className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
+          <li>
+            <Link
+              href="/"
+              className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
+              onClick={closeMenu}
+            >
+              <FaHome className="text-md" />
+              <span>Home</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/create"
+              className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
+              onClick={closeMenu}
+            >
+              <FaSearch className="text-md" />
+              <span>Find Your Team</span>
+            </Link>
+          </li>
+        </ul>
+
         <button
           className="md:hidden focus:outline-none"
           onClick={toggleMenu}
@@ -36,46 +62,29 @@ export default function Navbar() {
             ></path>
           </svg>
         </button>
-        <ul className="hidden md:flex space-x-6">
-          <li>
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-blue-600 transition duration-300"
-              onClick={closeMenu}
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-blue-600 transition duration-300"
-              onClick={closeMenu}
-            >
-              About
-            </Link>
-          </li>
-        </ul>
       </div>
+
       {isMenuOpen && (
         <div className="md:hidden">
           <ul className="flex flex-col space-y-2 p-4">
             <li>
               <Link
                 href="/"
-                className="text-gray-700 hover:text-blue-600 transition duration-300"
+                className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
                 onClick={closeMenu}
               >
-                Home
+                <FaHome className="text-xl" />
+                <span>Home</span>
               </Link>
             </li>
             <li>
               <Link
-                href="/about"
-                className="text-gray-700 hover:text-blue-600 transition duration-300"
+                href="/create"
+                className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
                 onClick={closeMenu}
               >
-                About
+                <FaSearch className="text-xl" />
+                <span>Find Your Team</span>
               </Link>
             </li>
           </ul>
