@@ -1,11 +1,22 @@
 "use client";
 
+import Image from "next/image";
+
 export default function Home() {
   return (
     <div className="mx-auto max-w-2xl text-center">
       <h1 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
         Team Building, Simplified
       </h1>
+      <div className="w-full mt-6 max-w-[500px] mx-auto flex justify-center">
+        <Image
+          src="/images/find-team.png"
+          alt="Team Collaboration"
+          width={500}
+          height={400}
+          className="rounded-lg shadow-lg w-full h-auto"
+        />
+      </div>
       <p className="mt-6 text-base font-medium text-gray-500 sm:text-lg md:text-xl lg:mt-8 lg:text-2xl">
         Quickly create skill-balanced teams for any activity.
       </p>
