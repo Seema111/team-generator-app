@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/database/dbConnect';
-import Player from '@/lib/database/models/Player';
+import Player from '@/pages/models/Player';
 import { validatePlayerInput } from '@/lib/utils/validation';
 import { v4 as uuidV4 } from 'uuid';
 

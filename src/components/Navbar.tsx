@@ -10,7 +10,7 @@ export default function Navbar() {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav className="fixed top-[2%] left-1/2 transform -translate-x-1/2 w-[70%] bg-[#f0f0f0] shadow-lg z-50 rounded-lg">
+    <nav className="fixed top-[2%] left-1/2 transform -translate-x-1/2 w-[70%] bg-[#f0f0f0] shadow-lg inset-shadow-2xs rounded-lg">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="text-xl font-bold text-[#6366f1] flex items-center space-x-2">
           <FaUsers className="text-2xl" />
