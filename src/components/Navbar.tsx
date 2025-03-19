@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { FaUsers, FaHome, FaSearch } from "react-icons/fa";
+import { FaUsers, FaHome } from "react-icons/fa";
+import { GrTools } from "react-icons/gr";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function Navbar() {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav className="fixed top-[2%] left-1/2 transform -translate-x-1/2 w-[70%] bg-[#f0f0f0] shadow-lg inset-shadow-2xs rounded-lg">
+    <nav className="fixed top-[2%] left-1/2 transform -translate-x-1/2 w-[70%] bg-white shadow-lg inset-shadow-2xs rounded-lg">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="text-xl font-bold text-[#6366f1] flex items-center space-x-2">
           <FaUsers className="text-2xl" />
@@ -36,8 +37,8 @@ export default function Navbar() {
               className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
               onClick={closeMenu}
             >
-              <FaSearch className="text-md" />
-              <span>Find Your Team</span>
+              <GrTools className="text-md" />
+              <span>Generate Your Team</span>
             </Link>
           </li>
         </ul>
@@ -83,8 +84,8 @@ export default function Navbar() {
                 className="text-gray-700 hover:text-[#6366f1] transition duration-300 flex items-center space-x-2"
                 onClick={closeMenu}
               >
-                <FaSearch className="text-xl" />
-                <span>Find Your Team</span>
+                <GrTools className="text-xl" />
+                <span>Generate Your Team</span>
               </Link>
             </li>
           </ul>

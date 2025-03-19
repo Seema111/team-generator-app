@@ -14,7 +14,7 @@ export default function ConfirmationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white/30 backdrop-invert backdrop-opacity-10">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/30 backdrop-invert backdrop-opacity-10 z-[1000]">
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p>{message}</p>
