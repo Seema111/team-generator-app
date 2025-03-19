@@ -104,7 +104,8 @@ export async function DELETE(request: Request): Promise<NextResponse> {
   try {
     await dbConnect();
 
-    const { id } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
     if (!id) {
       return NextResponse.json(
@@ -113,21 +114,15 @@ export async function DELETE(request: Request): Promise<NextResponse> {
       );
     }
 
-    const deletedTeam = await Team.findOneAndDelete({ _id: id }).select("_id id name");
+    const deletedTeam = await Team.findByIdAndDelete(id).select("_id id name");
 
     if (!deletedTeam) {
-      return NextResponse.json(
-        { success: false, error: "Team not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Team not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, message: "Team deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error("Error deleting team:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to delete team" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Failed to delete team" }, { status: 500 });
   }
 }

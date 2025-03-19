@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";// Ensure correct path
 import Player from "@/database/models/Player"; // Ensure correct path
-import { validatePlayerInput } from "@/lib/utils/validation";
+import { validatePlayerInput } from "@/app/utils/validation";
 import { v4 as uuidV4 } from "uuid";
 import { IServerPlayer } from "@/types";
 import dbConnect from "@/database/dbConnect";

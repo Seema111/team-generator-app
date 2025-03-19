@@ -1,35 +1,59 @@
 "use client";
 
 import { FaPlus, FaEdit } from "react-icons/fa";
-import { Key, useState } from "react";
+import { Key, useEffect, useReducer } from "react";
 import { ITeam } from "@/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import React from "react";
+import { initialTeamState, teamReducer } from "@/app/utils/reducer";
 
-interface CreateTeamProps {
-  initialTeams: ITeam[];
-}
-
-export default function CreateTeam({ initialTeams }: CreateTeamProps) {
-  const [teams, setTeams] = useState<ITeam[]>(initialTeams);
-  const [teamName, setTeamName] = useState<string>("");
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [teamIdToDelete, setTeamIdToDelete] = useState<string | null>(null);
+export default function CreateTeam() {
+  const [state, dispatch] = useReducer(teamReducer, initialTeamState);
+  const {
+    teams,
+    teamName,
+    editIndex,
+    isSubmitting,
+    error,
+    isDeleteModalOpen,
+    teamIdToDelete,
+  } = state;
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const teamsRes = await fetch(`${apiBaseUrl}/api/teams`);
+
+        if (!teamsRes.ok) {
+          throw new Error("Failed to fetch players");
+        }
+
+        const teamsData = await teamsRes.json();
+        dispatch({ type: "SET_TEAMS", payload: teamsData.data || [] });
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: "Failed to fetch teams, try again later.",
+        });
+      }
+    };
+
+    fetchTeams();
+  }, [apiBaseUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!teamName.trim()) {
-      setError("Please enter a Team Name.");
+      dispatch({ type: "SET_ERROR", payload: "Please enter a Team Name." });
       return;
     }
 
-    setIsSubmitting(true);
-    setError(null);
+    dispatch({ type: "SET_IS_SUBMITTING", payload: true });
+    dispatch({ type: "SET_ERROR", payload: null });
 
     try {
       if (editIndex !== null) {
@@ -50,8 +74,8 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
         const updatedTeam = await response.json();
         const updatedTeams = [...teams];
         updatedTeams[editIndex] = updatedTeam.data;
-        setTeams(updatedTeams);
-        setEditIndex(null);
+        dispatch({ type: "SET_TEAMS", payload: updatedTeams });
+        dispatch({ type: "SET_EDIT_INDEX", payload: null });
       } else {
         const response = await fetch(`${apiBaseUrl}/api/teams`, {
           method: "POST",
@@ -64,35 +88,36 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
         }
 
         const newTeam = await response.json();
-        setTeams([...teams, newTeam.data]);
+        dispatch({ type: "SET_TEAMS", payload: [...teams, newTeam.data] });
       }
 
-      setTeamName("");
+      dispatch({ type: "SET_TEAM_NAME", payload: "" });
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Please try again.");
+      dispatch({
+        type: "SET_ERROR",
+        payload: "An error occurred. Please try again.",
+      });
     } finally {
-      setIsSubmitting(false);
+      dispatch({ type: "SET_IS_SUBMITTING", payload: false });
     }
   };
 
   const handleEdit = (index: number) => {
     const team = teams[index];
-    setTeamName(team.name);
-    setEditIndex(index);
+    dispatch({ type: "SET_TEAM_NAME", payload: team.name });
+    dispatch({ type: "SET_EDIT_INDEX", payload: index });
   };
 
   const handleDeleteClick = (teamId: string) => {
-    setTeamIdToDelete(teamId);
-    setIsDeleteModalOpen(true);
+    dispatch({ type: "SET_TEAM_ID_TO_DELETE", payload: teamId });
+    dispatch({ type: "SET_IS_DELETE_MODAL_OPEN", payload: true });
   };
 
   const handleDeleteConfirm = async () => {
     if (!teamIdToDelete) return;
 
     try {
-      console.log("Deleting team with ID:", teamIdToDelete);
-
       const response = await fetch(
         `${apiBaseUrl}/api/teams?id=${teamIdToDelete}`,
         {
@@ -101,25 +126,28 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
       );
 
       const responseData = await response.json();
-      console.log("API Response:", responseData);
 
       if (!response.ok) {
         throw new Error(responseData.error || "Failed to delete team");
       }
 
-      setTeams((prevTeams) =>
-        prevTeams.filter((team) => team.teamId !== teamIdToDelete)
-      );
+      dispatch({
+        type: "SET_TEAMS",
+        payload: teams.filter((team) => team.teamId !== teamIdToDelete),
+      });
       handleDeleteCancel();
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Please try again.");
+      dispatch({
+        type: "SET_ERROR",
+        payload: "An error occurred. Please try again.",
+      });
     }
   };
 
   const handleDeleteCancel = () => {
-    setIsDeleteModalOpen(false);
-    setTeamIdToDelete(null);
+    dispatch({ type: "SET_IS_DELETE_MODAL_OPEN", payload: false });
+    dispatch({ type: "SET_TEAM_ID_TO_DELETE", payload: null });
   };
 
   return (
@@ -152,7 +180,12 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
                     type="text"
                     placeholder="Enter team name"
                     value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_TEAM_NAME",
+                        payload: e.target.value,
+                      })
+                    }
                     className="w-full p-2 text-gray-900 placeholder-gray-400 outline-none"
                     disabled={isSubmitting}
                   />
@@ -190,39 +223,13 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
               <ul>
                 {teams.length > 0 ? (
                   teams.map((team: ITeam, index: Key) => (
-                    <li
+                    <TeamListItem
                       key={team.id}
-                      className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
-                    >
-                      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
-                        {team.name}
-                      </span>
-                      <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
-                        <button
-                          onClick={() => handleEdit(index as number)}
-                          className="p-1 text-gray-500 cursor-pointer hover:text-blue-600 focus:outline-none flex-shrink-0"
-                        >
-                          <FaEdit className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(team.teamId)}
-                          className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </li>
+                      team={team}
+                      index={index as number}
+                      onEdit={handleEdit}
+                      onDelete={handleDeleteClick}
+                    />
                   ))
                 ) : (
                   <li className="p-3 bg-white rounded-md text-gray-500 text-center border border-gray-200">
@@ -246,3 +253,48 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
     </>
   );
 }
+
+const TeamListItem = ({
+  team,
+  index,
+  onEdit,
+  onDelete,
+}: {
+  team: ITeam;
+  index: number;
+  onEdit: (index: number) => void;
+  onDelete: (teamId: string) => void;
+}) => {
+  return (
+    <li className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0">
+      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
+        {team.name}
+      </span>
+      <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
+        <button
+          onClick={() => onEdit(index)}
+          className="p-1 text-gray-500 cursor-pointer hover:text-blue-600 focus:outline-none flex-shrink-0"
+        >
+          <FaEdit className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => onDelete(team.teamId)}
+          className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+    </li>
+  );
+};
