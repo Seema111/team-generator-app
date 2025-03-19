@@ -32,7 +32,6 @@ export default function CreateMatch() {
       }
 
       setSuccess("Teams generated successfully!");
-      console.log("Generated Data:", matchedResponse.data);
 
       if (matchedResponse.data?.match?.matchId) {
         router.push(`/teams/${matchedResponse.data.match.matchId}`);

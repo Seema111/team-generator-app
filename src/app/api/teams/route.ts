@@ -41,6 +41,14 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
+    const existingTeam = await Team.findOne({ name });
+    if (existingTeam) {
+      return NextResponse.json(
+        { success: false, error: "Team name already exists" },
+        { status: 400 }
+      );
+    }
+
     const newTeam = new Team({ name });
     const savedTeam = await newTeam.save();
 
@@ -52,6 +60,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   } catch (error) {
     console.error("Error saving team:", error);
+
+    // Handle duplicate key error
+    if (error instanceof MongoServerError && error.code === 11000) {
+      return NextResponse.json(
+        { success: false, error: "Team name already exists" },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { success: false, error: "Failed to save team" },
       { status: 500 }

@@ -1,5 +1,6 @@
 "use client"; // Mark this as a client-side component
 
+import { IPlayer } from "@/types";
 import React, { useState, useEffect } from "react";
 
 export interface Player {
@@ -11,7 +12,7 @@ export interface Team {
   teamId: string;
   id: string;
   name: string;
-  players: string[];
+  players: IPlayer[];
 }
 
 export interface Match {
@@ -159,10 +160,10 @@ export default function TeamsPage({
                 </tr>
               </thead>
               <tbody>
-                {team.players.map((playerId, index) => (
-                  <tr key={playerId} className="border-b">
+                {team.players.map((player, index) => (
+                  <tr key={player.id} className="border-b">
                     <td className="py-2">{index + 1}.</td>
-                    <td className="py-2">{playerId}</td>
+                    <td className="py-2">{player.name}</td>
                   </tr>
                 ))}
               </tbody>

@@ -34,7 +34,7 @@ export interface IServerTeam {
     _id: string;
     id: string;
     name: string;
-    players?: string[];
+    players?: IPlayer[];
     __v?: number;
 }
 

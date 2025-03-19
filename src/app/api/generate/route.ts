@@ -72,7 +72,6 @@ export async function POST(request: Request): Promise<NextResponse> {
                 return await team.save();
             })
         );
-        console.log("Teams saved:", savedTeams);
 
         const matchData: IServerGenerate = {
             _id: new mongoose.Types.ObjectId().toHexString(),
@@ -142,7 +141,7 @@ export async function GET(request: Request): Promise<NextResponse> {
                         teamId: team._id,
                         id: team.id,
                         name: team.name,
-                        players: team.players,
+                        players: team?.players,
                     })),
                 },
             },

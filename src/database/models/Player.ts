@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
 
-const playerSchema = new mongoose.Schema({
+export const playerSchema = new mongoose.Schema({
   id: {
     type: String,
     default: uuidV4,
