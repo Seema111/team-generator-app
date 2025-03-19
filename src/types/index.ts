@@ -13,6 +13,15 @@ export interface IServerPlayer {
     __v?: number;
 }
 
+export interface IServerGenerate {
+    _id: string;
+    matchId: string;
+    title: string;
+    balancedTeams: IServerTeam[];
+    __v?: number;
+}
+
+
 export interface ITeam {
     id: string;
     teamId: string;
@@ -23,6 +32,7 @@ export interface IServerTeam {
     _id: string;
     id: string;
     name: string;
+    players?: string[];
     __v?: number;
 }
 

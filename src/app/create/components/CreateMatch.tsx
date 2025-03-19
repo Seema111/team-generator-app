@@ -4,66 +4,93 @@ import React, { useState } from "react";
 
 export default function CreateMatch() {
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate teams");
+      }
+
+      setSuccess("Teams generated successfully!");
+      console.log("Generated Data:", data.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex-grow-0 w-1/4">
-      <div className="left-0 flex justify-center pl-4 pr-4 pb-4">
-        <div className="rounded-lg flex flex-col lg:flex-row gap-6">
-          <div className="w-full">
-            <form onSubmit={() => {}} className="space-y-4">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                Title
-              </h1>
-
-              {/* {error ? (
-                <div className="p-2 bg-red-100 text-red-600 rounded-md">
-                  {error}
-                </div>
-              ) : ( */}
-              <div className="p-2 bg-green-100 text-green-600 rounded-md">
-                Title for the Event
-              </div>
-              {/* )} */}
-
-              <div>
-                <label
-                  htmlFor="team"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Title
-                </label>
-                <div className="flex items-center border rounded-md p-2 focus-within:border-indigo-600">
-                  <input
-                    id="title"
-                    name="title"
-                    type="text"
-                    placeholder="Enter title"
-                    value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
-                    className="w-full p-2 text-gray-900 placeholder-gray-400 outline-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="p-2 flex text-gray-500 cursor-pointer hover:text-indigo-600"
-                >
-                  Generate Teams
-                </button>
-              </div>
-            </form>
-          </div>
+    <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            Name Your Event
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Give the title for your activity and generate teams.
+          </p>
         </div>
+
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="title" className="sr-only">
+                Title
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Enter title"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#4169E1] hover:bg-[#3257B8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Generating..." : "Generate Teams"}
+            </button>
+          </div>
+        </form>
+
+        {error && (
+          <div className="mt-4 p-2 bg-red-100 text-red-600 rounded-md text-center">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mt-4 p-2 bg-green-100 text-green-600 rounded-md text-center">
+            {success}
+          </div>
+        )}
       </div>
-      {/* <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onConfirm={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
-        title="Confirm Delete"
-        message="Are you sure you want to delete this team?"
-        confirmText="Delete"
-        cancelText="Cancel"
-      /> */}
     </div>
   );
 }

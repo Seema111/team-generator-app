@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";// Ensure correct path
-import Player from "@/database/models/Player"; // Ensure correct path
+import { NextResponse } from "next/server";
+import Player from "@/database/models/Player";
 import { validatePlayerInput } from "@/app/utils/validation";
 import { v4 as uuidV4 } from "uuid";
 import { IServerPlayer } from "@/types";
