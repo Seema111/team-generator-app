@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/database/dbConnect";
-import Team from "@/database/models/Team";
+import { Team } from "@/database/models/Team";
 import { IServerTeam } from "@/types";
 
 function transformTeam(team: IServerTeam) {

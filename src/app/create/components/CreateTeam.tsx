@@ -151,18 +151,22 @@ export default function CreateTeam() {
   };
 
   return (
-    <>
-      <div className="fixed top-[50%] left-0 w-full flex justify-center p-4 sm:p-6">
-        <div className="w-full max-w-6xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
-          <div className="w-full lg:w-1/2">
+    <div className="flex-grow">
+      <div className="w-full left-0 flex justify-center pl-4 pb-4">
+        <div className="w-full rounded-lg grid lg:flex-row gap-6">
+          <div className="w-full">
             <form onSubmit={handleSubmit} className="space-y-4">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                 {editIndex !== null ? "Edit Team" : "Create Team"}
               </h1>
 
-              {error && (
+              {error ? (
                 <div className="p-2 bg-red-100 text-red-600 rounded-md">
                   {error}
+                </div>
+              ) : (
+                <div className="p-2 bg-green-100 text-green-600 rounded-md">
+                  Add your Team name
                 </div>
               )}
 
@@ -209,8 +213,7 @@ export default function CreateTeam() {
             </form>
           </div>
 
-          {/* Right Side: Teams List */}
-          <div className="w-full lg:w-1/2">
+          <div className="w-full pt-21">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
               Teams ({teams?.length})
             </h2>
@@ -250,7 +253,7 @@ export default function CreateTeam() {
         confirmText="Delete"
         cancelText="Cancel"
       />
-    </>
+    </div>
   );
 }
 

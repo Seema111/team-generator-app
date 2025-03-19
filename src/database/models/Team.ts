@@ -11,6 +11,12 @@ const teamSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  players: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Player',
+  }],
+}, {
+  timestamps: true,
 });
 
-export default mongoose.models.Team || mongoose.model('Team', teamSchema);
+export const Team = mongoose.models.Team || mongoose.model('Team', teamSchema);
