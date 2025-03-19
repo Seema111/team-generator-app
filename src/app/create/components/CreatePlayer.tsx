@@ -44,7 +44,7 @@ export default function CreatePlayer() {
       if (!playerName.trim() || selectedSkill === null) {
         dispatch({
           type: "SET_ERROR",
-          payload: "Please enter both Player Name and select a Skill.",
+          payload: "Both Player Name and Skill is required.",
         });
         return;
       }
@@ -172,15 +172,11 @@ export default function CreatePlayer() {
     isLoading,
   } = state;
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
   return (
-    <>
-      <div className="fixed top-[10%] left-0 w-full flex justify-center p-4 sm:p-6">
-        <div className="w-full max-w-6xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
-          <div className="w-full lg:w-1/2">
+    <div className="flex-grow">
+      <div className="left-0 flex justify-center pl-4 pb-4">
+        <div className="w-full rounded-lg grid lg:flex-row gap-6">
+          <div className="w-full">
             <form onSubmit={handleSubmit} className="space-y-4">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                 {editIndex !== null ? "Edit Player" : "Add Player"}
@@ -262,7 +258,7 @@ export default function CreatePlayer() {
             </form>
           </div>
 
-          <div className="w-full lg:w-1/2">
+          <div className="w-full">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
               Players ({players?.length})
             </h2>
@@ -317,7 +313,7 @@ export default function CreatePlayer() {
                   ))
                 ) : (
                   <li className="p-3 bg-white rounded-md text-gray-500 text-center border border-gray-200">
-                    No players added yet.
+                    {isLoading ? " Loading.." : "No players added yet."}
                   </li>
                 )}
               </ul>
@@ -334,6 +330,6 @@ export default function CreatePlayer() {
         confirmText="Delete"
         cancelText="Cancel"
       />
-    </>
+    </div>
   );
 }
