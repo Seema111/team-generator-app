@@ -2,29 +2,30 @@
 
 import { FaPlus, FaEdit } from "react-icons/fa";
 import { Key, useState } from "react";
-import { Team } from "@/types/interface";
+import { IPlayer } from "@/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
 
-interface CreateTeamProps {
-  initialTeams: Team[];
+interface CreatePlayerProps {
+  initialPlayers: IPlayer[];
 }
 
-export default function CreateTeam({ initialTeams }: CreateTeamProps) {
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
-  const [teamName, setTeamName] = useState<string>("");
+export default function CreatePlayer({ initialPlayers }: CreatePlayerProps) {
+  const [players, setPlayers] = useState<IPlayer[]>(initialPlayers);
+  const [playerName, setPlayerName] = useState<string>("");
+  const [selectedSkill, setSelectedSkill] = useState<number | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [teamIdToDelete, setTeamIdToDelete] = useState<string | null>(null);
+  const [playerIdToDelete, setPlayerIdToDelete] = useState<string | null>(null);
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!teamName.trim()) {
-      setError("Please enter a Team Name.");
+    if (!playerName.trim() || selectedSkill === null) {
+      setError("Please enter both Player Name and select a Skill.");
       return;
     }
 
@@ -33,41 +34,43 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
 
     try {
       if (editIndex !== null) {
-        const teamToUpdate = teams[editIndex];
-        const response = await fetch(`${apiBaseUrl}/api/teams`, {
+        const playerToUpdate = players[editIndex];
+        const response = await fetch(`${apiBaseUrl}/api/players`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: teamToUpdate.teamId,
-            name: teamName,
+            id: playerToUpdate.playerId,
+            name: playerName,
+            skill: selectedSkill,
           }),
         });
 
         if (!response.ok) {
-          throw new Error("Failed to update team");
+          throw new Error("Failed to update player");
         }
 
-        const updatedTeam = await response.json();
-        const updatedTeams = [...teams];
-        updatedTeams[editIndex] = updatedTeam.data;
-        setTeams(updatedTeams);
+        const updatedPlayer = await response.json();
+        const updatedPlayers = [...players];
+        updatedPlayers[editIndex] = updatedPlayer?.data;
+        setPlayers(updatedPlayers);
         setEditIndex(null);
       } else {
-        const response = await fetch(`${apiBaseUrl}/api/teams`, {
+        const response = await fetch(`${apiBaseUrl}/api/players`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: teamName }),
+          body: JSON.stringify({ name: playerName, skill: selectedSkill }),
         });
 
         if (!response.ok) {
-          throw new Error("Failed to add team");
+          throw new Error("Failed to add player");
         }
 
-        const newTeam = await response.json();
-        setTeams([...teams, newTeam.data]);
+        const newPlayer = await response.json();
+        console.log(newPlayer);
+        setPlayers([...players, newPlayer?.data]);
       }
-
-      setTeamName("");
+      setPlayerName("");
+      setSelectedSkill(null);
     } catch (error) {
       console.error("Error:", error);
       setError("An error occurred. Please try again.");
@@ -77,35 +80,39 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
   };
 
   const handleEdit = (index: number) => {
-    const team = teams[index];
-    setTeamName(team.name);
+    const player = players[index];
+    setPlayerName(player.name);
+    setSelectedSkill(player.skill);
     setEditIndex(index);
   };
 
-  const handleDeleteClick = (teamId: string) => {
-    setTeamIdToDelete(teamId);
+  const handleDeleteClick = (playerId: string) => {
+    setPlayerIdToDelete(playerId);
     setIsDeleteModalOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (!teamIdToDelete) return;
+    if (!playerIdToDelete) return;
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/teams`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: teamIdToDelete }),
-      });
+      const response = await fetch(
+        `${apiBaseUrl}/api/players?id=${playerIdToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const responseData = await response.json();
+      console.log("API Response:", responseData);
 
       if (!response.ok) {
-        throw new Error("Failed to delete team");
+        throw new Error(responseData.error || "Failed to delete player");
       }
 
-      const updatedTeams = teams.filter(
-        (team) => team.teamId !== teamIdToDelete
+      setPlayers((prevPlayers) =>
+        prevPlayers.filter((player) => player.playerId !== playerIdToDelete)
       );
-      setTeams(updatedTeams);
-      handleDeleteCancel()
+      handleDeleteCancel();
     } catch (error) {
       console.error("Error:", error);
       setError("An error occurred. Please try again.");
@@ -114,40 +121,44 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
 
   const handleDeleteCancel = () => {
     setIsDeleteModalOpen(false);
-    setTeamIdToDelete(null);
+    setPlayerIdToDelete(null);
   };
 
   return (
     <>
-      <div className="fixed top-[45%] left-0 w-full flex justify-center p-4 sm:p-6">
+      <div className="fixed top-[10%] left-0 w-full flex justify-center p-4 sm:p-6">
         <div className="w-full max-w-6xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
           <div className="w-full lg:w-1/2">
             <form onSubmit={handleSubmit} className="space-y-4">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                {editIndex !== null ? "Edit Team" : "Create Team"}
+                {editIndex !== null ? "Edit Player" : "Add Player"}
               </h1>
 
-              {error && (
+              {error ? (
                 <div className="p-2 bg-red-100 text-red-600 rounded-md">
                   {error}
+                </div>
+              ) : (
+                <div className="p-2 bg-green-100 text-green-600 rounded-md">
+                  Enter Player name along with their Skill.
                 </div>
               )}
 
               <div>
                 <label
-                  htmlFor="team"
+                  htmlFor="player"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Team Name
+                  Player Name
                 </label>
                 <div className="flex items-center border rounded-md p-2 focus-within:border-indigo-600">
                   <input
-                    id="team"
-                    name="team"
+                    id="player"
+                    name="player"
                     type="text"
-                    placeholder="Enter team name"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
+                    placeholder="Enter player name"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
                     className="w-full p-2 text-gray-900 placeholder-gray-400 outline-none"
                     disabled={isSubmitting}
                   />
@@ -168,29 +179,54 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
                   </button>
                 </div>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rate Skill (Scale of 1-5)
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {[1, 2, 3, 4, 5].map((skill) => (
+                    <div
+                      key={skill}
+                      onClick={() => setSelectedSkill(skill)}
+                      className={`p-3 border rounded-md cursor-pointer transition-all duration-200 ${
+                        selectedSkill !== null && skill <= selectedSkill
+                          ? "bg-red-500 text-white border-red-500 shadow-lg"
+                          : "bg-white text-gray-700 border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-500"
+                      }`}
+                    >
+                      {skill}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </form>
           </div>
 
-          {/* Right Side: Teams List */}
           <div className="w-full lg:w-1/2">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-              Teams ({teams?.length})
+              Players ({players?.length})
             </h2>
             <div className="mt-4">
               <div className="hidden sm:flex justify-between items-center pl-3 pr-2 p-1 bg-gray-100 text-sm font-medium text-gray-700 border border-gray-200">
                 <span className="flex-1">Name</span>
+                <span className="flex-1 text-center">Skill (1-5)</span>
                 <span className="flex-1 text-right">Action</span>
               </div>
 
               <ul>
-                {teams.length > 0 ? (
-                  teams.map((team: Team, index: Key) => (
+                {players.length > 0 ? (
+                  players.map((player: IPlayer, index: Key) => (
                     <li
-                      key={team.id}
+                      key={player.id}
                       className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
                     >
                       <span className="flex-1 min-w-0 truncate text-center sm:text-left">
-                        {team.name}
+                        {player.name}
+                      </span>
+
+                      <span className="flex-1 text-center min-w-0 mt-2 sm:mt-0">
+                        {player.skill}
                       </span>
                       <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
                         <button
@@ -199,8 +235,9 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
                         >
                           <FaEdit className="h-5 w-5" />
                         </button>
+
                         <button
-                          onClick={() => handleDeleteClick(team.teamId)}
+                          onClick={() => handleDeleteClick(player.playerId)}
                           className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
                         >
                           <svg
@@ -221,7 +258,7 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
                   ))
                 ) : (
                   <li className="p-3 bg-white rounded-md text-gray-500 text-center border border-gray-200">
-                    No teams added yet.
+                    No players added yet.
                   </li>
                 )}
               </ul>
@@ -234,7 +271,7 @@ export default function CreateTeam({ initialTeams }: CreateTeamProps) {
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         title="Confirm Delete"
-        message="Are you sure you want to delete this team?"
+        message="Are you sure you want to delete this player?"
         confirmText="Delete"
         cancelText="Cancel"
       />

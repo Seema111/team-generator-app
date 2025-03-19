@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmationModalProps } from "@/types/interface";
+import { IConfirmationModalProps } from "@/types";
 
 export default function ConfirmationModal({
   isOpen,
@@ -10,7 +10,7 @@ export default function ConfirmationModal({
   message,
   confirmText = "Confirm",
   cancelText = "Cancel",
-}: ConfirmationModalProps) {
+}: IConfirmationModalProps) {
   if (!isOpen) return null;
 
   return (

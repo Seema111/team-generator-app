@@ -1,18 +1,16 @@
-import CreatePlayer from "./CreatePlayer";
-import { Player, Team } from "@/types/interface";
-import CreateTeam from "./CreateTeam";
+import CreatePlayer from "@/app/create/components/CreatePlayer";
+import CreateTeam from "@/app/create/components/CreateTeam";
+import { IPlayer, ITeam } from "@/types";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-async function getPlayers(): Promise<Player[]> {
+async function getPlayers(): Promise<IPlayer[]> {
   try {
     if (!apiBaseUrl) {
       throw new Error("API base URL is not defined in environment variables");
     }
 
-    const res = await fetch(`${apiBaseUrl}/api/players`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`${apiBaseUrl}/api/players`);
 
     if (!res.ok) {
       console.error("API Response Not OK:", res.status, res.statusText);
@@ -27,15 +25,13 @@ async function getPlayers(): Promise<Player[]> {
   }
 }
 
-async function getTeams(): Promise<Team[]> {
+async function getTeams(): Promise<ITeam[]> {
   try {
     if (!apiBaseUrl) {
       throw new Error("API base URL is not defined in environment variables");
     }
 
-    const res = await fetch(`${apiBaseUrl}/api/teams`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`${apiBaseUrl}/api/teams`);
 
     if (!res.ok) {
       console.error("API Response Not OK:", res.status, res.statusText);
