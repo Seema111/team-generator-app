@@ -258,18 +258,23 @@ export default function CreateTeam() {
 }
 
 const TeamListItem = ({
+  key,
   team,
   index,
   onEdit,
   onDelete,
 }: {
+  key: string;
   team: ITeam;
   index: number;
   onEdit: (index: number) => void;
   onDelete: (teamId: string) => void;
 }) => {
   return (
-    <li className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0">
+    <li
+      key={key}
+      className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
+    >
       <span className="flex-1 min-w-0 truncate text-center sm:text-left">
         {team.name}
       </span>

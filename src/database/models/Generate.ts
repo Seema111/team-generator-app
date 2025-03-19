@@ -10,6 +10,14 @@ const generateSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    teamCount: {
+        type: Number,
+        default: 0
+    },
+    playerCount: {
+        type: Number,
+        default: 0
+    },
     balancedTeams: [
         {
             teamId: String,

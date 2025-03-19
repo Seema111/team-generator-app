@@ -5,14 +5,13 @@ const teamSchema = new mongoose.Schema({
   id: {
     type: String,
     default: uuidV4,
-    unique: true,
   },
   name: {
     type: String,
     required: true,
   },
   players: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Player',
   }],
 }, {

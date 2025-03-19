@@ -17,7 +17,9 @@ export interface IServerGenerate {
     _id: string;
     matchId: string;
     title: string;
-    balancedTeams: IServerTeam[];
+    teamCount: number;
+    playerCount: number;
+    balancedTeams:  IServerTeam[];
     __v?: number;
 }
 

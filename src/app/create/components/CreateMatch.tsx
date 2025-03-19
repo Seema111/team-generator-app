@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CreateMatch() {
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,14 +25,18 @@ export default function CreateMatch() {
         body: JSON.stringify({ title }),
       });
 
-      const data = await response.json();
+      const matchedResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to generate teams");
+        throw new Error(matchedResponse.error || "Failed to generate teams");
       }
 
       setSuccess("Teams generated successfully!");
-      console.log("Generated Data:", data.data);
+      console.log("Generated Data:", matchedResponse.data);
+
+      if (matchedResponse.data?.match?.matchId) {
+        router.push(`/teams/${matchedResponse.data.match.matchId}`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
