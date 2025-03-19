@@ -1,97 +1,130 @@
 "use client";
 
 import { FaPlus, FaEdit } from "react-icons/fa";
-import { Key, useState } from "react";
+import { Key, useEffect, useReducer, useCallback } from "react";
 import { IPlayer } from "@/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import { initialPlayerState, playerReducer } from "@/app/utils/reducer";
 
-interface CreatePlayerProps {
-  initialPlayers: IPlayer[];
-}
-
-export default function CreatePlayer({ initialPlayers }: CreatePlayerProps) {
-  const [players, setPlayers] = useState<IPlayer[]>(initialPlayers);
-  const [playerName, setPlayerName] = useState<string>("");
-  const [selectedSkill, setSelectedSkill] = useState<number | null>(null);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [playerIdToDelete, setPlayerIdToDelete] = useState<string | null>(null);
-
+export default function CreatePlayer() {
+  const [state, dispatch] = useReducer(playerReducer, initialPlayerState);
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const playersRes = await fetch(`${apiBaseUrl}/api/players`);
 
-    if (!playerName.trim() || selectedSkill === null) {
-      setError("Please enter both Player Name and select a Skill.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      if (editIndex !== null) {
-        const playerToUpdate = players[editIndex];
-        const response = await fetch(`${apiBaseUrl}/api/players`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: playerToUpdate.playerId,
-            name: playerName,
-            skill: selectedSkill,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update player");
+        if (!playersRes.ok) {
+          throw new Error("Failed to fetch players");
         }
 
-        const updatedPlayer = await response.json();
-        const updatedPlayers = [...players];
-        updatedPlayers[editIndex] = updatedPlayer?.data;
-        setPlayers(updatedPlayers);
-        setEditIndex(null);
-      } else {
-        const response = await fetch(`${apiBaseUrl}/api/players`, {
-          method: "POST",
+        const playersData = await playersRes.json();
+        dispatch({ type: "SET_PLAYERS", payload: playersData.data || [] });
+      } catch (error) {
+        console.error("Error fetching players:", error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: "Failed to fetch players, try again later.",
+        });
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
+    };
+
+    fetchPlayers();
+  }, [apiBaseUrl]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const { playerName, selectedSkill, players, editIndex } = state;
+
+      if (!playerName.trim() || selectedSkill === null) {
+        dispatch({
+          type: "SET_ERROR",
+          payload: "Please enter both Player Name and select a Skill.",
+        });
+        return;
+      }
+
+      dispatch({ type: "SET_SUBMITTING", payload: true });
+      dispatch({ type: "SET_ERROR", payload: null });
+
+      try {
+        const url = `${apiBaseUrl}/api/players`;
+        const method = editIndex !== null ? "PUT" : "POST";
+        const body = JSON.stringify(
+          editIndex !== null
+            ? {
+                id: players[editIndex].playerId,
+                name: playerName,
+                skill: selectedSkill,
+              }
+            : { name: playerName, skill: selectedSkill }
+        );
+
+        const response = await fetch(url, {
+          method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: playerName, skill: selectedSkill }),
+          body,
         });
 
         if (!response.ok) {
-          throw new Error("Failed to add player");
+          throw new Error(
+            `Failed to ${editIndex !== null ? "update" : "add"} player`
+          );
         }
 
         const newPlayer = await response.json();
-        console.log(newPlayer);
-        setPlayers([...players, newPlayer?.data]);
+
+        dispatch({
+          type: "SET_PLAYERS",
+          payload:
+            editIndex !== null
+              ? players.map((player, index) =>
+                  index === editIndex ? newPlayer.data : player
+                )
+              : [...players, newPlayer.data],
+        });
+
+        dispatch({ type: "SET_PLAYER_NAME", payload: "" });
+        dispatch({ type: "SET_SELECTED_SKILL", payload: null });
+        dispatch({ type: "SET_EDIT_INDEX", payload: null });
+      } catch (error) {
+        console.error("Error:", error);
+        dispatch({
+          type: "SET_ERROR",
+          payload: "An error occurred. Please try again.",
+        });
+      } finally {
+        dispatch({ type: "SET_SUBMITTING", payload: false });
       }
-      setPlayerName("");
-      setSelectedSkill(null);
-    } catch (error) {
-      console.error("Error:", error);
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    },
+    [apiBaseUrl, state]
+  );
 
-  const handleEdit = (index: number) => {
-    const player = players[index];
-    setPlayerName(player.name);
-    setSelectedSkill(player.skill);
-    setEditIndex(index);
-  };
+  const handleEdit = useCallback(
+    (index: number) => {
+      dispatch({ type: "SET_PLAYER_NAME", payload: state.players[index].name });
+      dispatch({
+        type: "SET_SELECTED_SKILL",
+        payload: state.players[index].skill,
+      });
+      dispatch({ type: "SET_EDIT_INDEX", payload: index });
+    },
+    [state.players]
+  );
 
-  const handleDeleteClick = (playerId: string) => {
-    setPlayerIdToDelete(playerId);
-    setIsDeleteModalOpen(true);
-  };
+  const handleDeleteClick = useCallback((playerId: string) => {
+    dispatch({ type: "SET_PLAYER_ID_TO_DELETE", payload: playerId });
+    dispatch({ type: "SET_DELETE_MODAL_OPEN", payload: true });
+  }, []);
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
+    const { playerIdToDelete } = state;
+
     if (!playerIdToDelete) return;
 
     try {
@@ -102,27 +135,46 @@ export default function CreatePlayer({ initialPlayers }: CreatePlayerProps) {
         }
       );
 
-      const responseData = await response.json();
-      console.log("API Response:", responseData);
-
       if (!response.ok) {
-        throw new Error(responseData.error || "Failed to delete player");
+        throw new Error("Failed to delete player");
       }
 
-      setPlayers((prevPlayers) =>
-        prevPlayers.filter((player) => player.playerId !== playerIdToDelete)
-      );
-      handleDeleteCancel();
+      dispatch({
+        type: "SET_PLAYERS",
+        payload: state.players.filter(
+          (player) => player.playerId !== playerIdToDelete
+        ),
+      });
+      dispatch({ type: "SET_DELETE_MODAL_OPEN", payload: false });
+      dispatch({ type: "SET_PLAYER_ID_TO_DELETE", payload: null });
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Please try again.");
+      dispatch({
+        type: "SET_ERROR",
+        payload: "An error occurred. Please try again.",
+      });
     }
-  };
+  }, [apiBaseUrl, state]);
 
-  const handleDeleteCancel = () => {
-    setIsDeleteModalOpen(false);
-    setPlayerIdToDelete(null);
-  };
+  const handleDeleteCancel = useCallback(() => {
+    dispatch({ type: "SET_DELETE_MODAL_OPEN", payload: false });
+    dispatch({ type: "SET_PLAYER_ID_TO_DELETE", payload: null });
+  }, []);
+
+  const {
+    players,
+    playerName,
+    selectedSkill,
+    editIndex,
+    isSubmitting,
+    error,
+    isDeleteModalOpen,
+    isLoading,
+  } = state;
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
@@ -158,7 +210,12 @@ export default function CreatePlayer({ initialPlayers }: CreatePlayerProps) {
                     type="text"
                     placeholder="Enter player name"
                     value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_PLAYER_NAME",
+                        payload: e.target.value,
+                      })
+                    }
                     className="w-full p-2 text-gray-900 placeholder-gray-400 outline-none"
                     disabled={isSubmitting}
                   />
@@ -188,7 +245,9 @@ export default function CreatePlayer({ initialPlayers }: CreatePlayerProps) {
                   {[1, 2, 3, 4, 5].map((skill) => (
                     <div
                       key={skill}
-                      onClick={() => setSelectedSkill(skill)}
+                      onClick={() =>
+                        dispatch({ type: "SET_SELECTED_SKILL", payload: skill })
+                      }
                       className={`p-3 border rounded-md cursor-pointer transition-all duration-200 ${
                         selectedSkill !== null && skill <= selectedSkill
                           ? "bg-red-500 text-white border-red-500 shadow-lg"

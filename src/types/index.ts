@@ -35,3 +35,16 @@ export interface IConfirmationModalProps {
     confirmText?: string;
     cancelText?: string;
 }
+
+
+export interface PlayerState {
+    players: IPlayer[];
+    playerName: string;
+    selectedSkill: number | null;
+    editIndex: number | null;
+    isSubmitting: boolean;
+    error: string | null;
+    isDeleteModalOpen: boolean;
+    playerIdToDelete: string | null;
+    isLoading: boolean;
+}
