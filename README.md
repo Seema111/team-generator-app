@@ -51,21 +51,15 @@ _Below is the instruction to install the project._
    
    git clone https://github.com/Seema111/team-generator-app.git
 
-
 2. Install NPM packages
    
-* npm
-  
   npm install
-
-
 
 3. Create a persona .env file OR update env.local to use personally
    
    MONGODB_URI="mongodbURL" <---MongoDB URI Link"--->
    
    NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
-
 
 5. Run the Project using 
    
