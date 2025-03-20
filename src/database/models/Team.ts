@@ -1,20 +1,18 @@
 import mongoose from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
+import { playerSchema } from './Player';
 
 const teamSchema = new mongoose.Schema({
   id: {
     type: String,
     default: uuidV4,
-    unique: true,
   },
   name: {
     type: String,
+    unique: true,
     required: true,
   },
-  players: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Player',
-  }],
+  players: [playerSchema],
 }, {
   timestamps: true,
 });

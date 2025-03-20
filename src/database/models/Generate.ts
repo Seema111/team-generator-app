@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { playerSchema } from "./Player";
 
 const generateSchema = new mongoose.Schema({
     matchId: {
@@ -10,12 +11,20 @@ const generateSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    teamCount: {
+        type: Number,
+        default: 0
+    },
+    playerCount: {
+        type: Number,
+        default: 0
+    },
     balancedTeams: [
         {
             teamId: String,
             id: String,
             name: String,
-            players: [String],
+            players: [playerSchema],
         },
     ],
 });

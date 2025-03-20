@@ -17,7 +17,9 @@ export interface IServerGenerate {
     _id: string;
     matchId: string;
     title: string;
-    balancedTeams: IServerTeam[];
+    teamCount: number;
+    playerCount: number;
+    balancedTeams:  IServerTeam[];
     __v?: number;
 }
 
@@ -32,7 +34,7 @@ export interface IServerTeam {
     _id: string;
     id: string;
     name: string;
-    players?: string[];
+    players?: IPlayer[];
     __v?: number;
 }
 

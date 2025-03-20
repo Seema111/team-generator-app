@@ -6,6 +6,7 @@ import { Generate } from "@/database/models/Generate";
 import { IServerTeam, IServerPlayer, IServerGenerate } from "@/types";
 import { generateBalancedTeams } from "@/app/utils/algorithm";
 import mongoose from "mongoose";
+import { v4 as uuidV4 } from "uuid";
 
 function transformTeam(team: IServerTeam) {
     return {
@@ -21,7 +22,7 @@ function transformMatch(match: IServerGenerate) {
         matchId: match.matchId,
         id: match.matchId,
         title: match.title,
-        balancedTeams: match.balancedTeams.map((team) => team._id),
+        teamCount: match.teamCount,
     };
 }
 
@@ -30,7 +31,6 @@ export async function POST(request: Request): Promise<NextResponse> {
         await dbConnect();
 
         const { title } = await request.json();
-        console.log("Received title:", title);
 
         if (!title || typeof title !== "string" || title.trim() === "") {
             return NextResponse.json(
@@ -40,10 +40,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
 
         const players: IServerPlayer[] = await Player.find({});
-        console.log("Players found:", players.length);
-
         const numberOfTeams = await Team.countDocuments({});
-        console.log("Number of teams:", numberOfTeams);
 
         if (numberOfTeams < 2 && players.length < 2) {
             return NextResponse.json(
@@ -60,37 +57,41 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
 
         const balancedTeams = generateBalancedTeams(players, numberOfTeams);
-        console.log("Balanced teams generated:", balancedTeams);
+        const existingTeams = await Team.find({}, { name: 1 });
+        const existingTeamNames = existingTeams.map((team) => team.name);
 
         const savedTeams = await Promise.all(
             balancedTeams.map(async (teamPlayers, index) => {
-                const team = new Team({
-                    teamId: new mongoose.Types.ObjectId().toHexString(),
-                    id: `team${index + 1}-id`,
-                    name: `Team ${index + 1}`,
-                    players: teamPlayers.map((player) => new mongoose.Types.ObjectId(player._id)),
-                });
-                return await team.save();
+                const teamName = existingTeamNames[index] || `Team ${index + 1}`;
+                const existingTeam = await Team.findOne({
+                    teamId: existingTeamIds[index],
+                })
+
+                if (existingTeam) {
+                    existingTeam.players = teamPlayers;
+                    return await existingTeam.save();
+                } else {
+                    const newTeam = new Team({
+                        teamId: new mongoose.Types.ObjectId().toHexString(),
+                        id: uuidV4(),
+                        name: teamName,
+                        players: teamPlayers,
+                    });
+                    return await newTeam.save();
+                }
             })
         );
-        console.log("Teams saved:", savedTeams);
-
         const matchData: IServerGenerate = {
             _id: new mongoose.Types.ObjectId().toHexString(),
             matchId: new mongoose.Types.ObjectId().toHexString(),
             title,
-            balancedTeams: savedTeams.map((team: IServerTeam) => ({
-                teamId: team._id,
-                id: team.id,
-                name: team.name,
-                players: team.players,
-                _id: team._id,
-            })),
+            teamCount: savedTeams.length,
+            playerCount: players.length,
+            balancedTeams: savedTeams
         };
 
         const match = new Generate(matchData);
         await match.save();
-        console.log("Match saved:", match);
 
         return NextResponse.json(
             {
@@ -103,9 +104,8 @@ export async function POST(request: Request): Promise<NextResponse> {
             { status: 201 }
         );
     } catch (error) {
-        console.error("Error generating teams:", error);
         return NextResponse.json(
-            { success: false, error: "Internal server error" },
+            { success: false, error: error },
             { status: 500 }
         );
     }
@@ -142,13 +142,14 @@ export async function GET(request: Request): Promise<NextResponse> {
                         matchId: match.matchId,
                         id: match.matchId,
                         title: match.title,
-                        balancedTeams: match.balancedTeams.map((team: IServerTeam) => team._id),
+                        teamCount: match.teamCount,
+                        playerCount: match.playerCount
                     },
                     teams: match.balancedTeams.map((team: IServerTeam) => ({
                         teamId: team._id,
                         id: team.id,
                         name: team.name,
-                        players: team.players,
+                        players: team?.players,
                     })),
                 },
             },

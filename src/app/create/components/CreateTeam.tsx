@@ -1,7 +1,7 @@
 "use client";
 
 import { FaPlus, FaEdit } from "react-icons/fa";
-import { Key, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { ITeam } from "@/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import React from "react";
@@ -225,14 +225,40 @@ export default function CreateTeam() {
 
               <ul>
                 {teams.length > 0 ? (
-                  teams.map((team: ITeam, index: Key) => (
-                    <TeamListItem
-                      key={team.id}
-                      team={team}
-                      index={index as number}
-                      onEdit={handleEdit}
-                      onDelete={handleDeleteClick}
-                    />
+                  teams.map((team: ITeam, index) => (
+                    <li
+                      key={team.teamId}
+                      className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
+                    >
+                      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
+                        {team.name}
+                      </span>
+                      <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
+                        <button
+                          onClick={() => handleEdit(index)}
+                          className="p-1 text-gray-500 cursor-pointer hover:text-blue-600 focus:outline-none flex-shrink-0"
+                        >
+                          <FaEdit className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(team.teamId)}
+                          className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </li>
                   ))
                 ) : (
                   <li className="p-3 bg-white rounded-md text-gray-500 text-center border border-gray-200">
@@ -256,48 +282,3 @@ export default function CreateTeam() {
     </div>
   );
 }
-
-const TeamListItem = ({
-  team,
-  index,
-  onEdit,
-  onDelete,
-}: {
-  team: ITeam;
-  index: number;
-  onEdit: (index: number) => void;
-  onDelete: (teamId: string) => void;
-}) => {
-  return (
-    <li className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0">
-      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
-        {team.name}
-      </span>
-      <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
-        <button
-          onClick={() => onEdit(index)}
-          className="p-1 text-gray-500 cursor-pointer hover:text-blue-600 focus:outline-none flex-shrink-0"
-        >
-          <FaEdit className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => onDelete(team.teamId)}
-          className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      </div>
-    </li>
-  );
-};
