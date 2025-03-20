@@ -1,24 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+RANDOM TEAM GENERATOR APP DOCUMENTATION
 
+
+<!-- GETTING STARTED -->
 ## Getting Started
 
-First, run the development server:
+ABOUT THE PROJECT: 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This documentation provides a comprehensive guide to the Random Team Generator App, including installation instructions, updates, API details, and the necessary data required for the app to function. The app is built using Next.js, Tailwind CSS, and React Icons, and it allows users to create random or skill-balanced teams from a list of participants. Features that are integrated:
+Generate completely random teams from a provided player list.
+Create balanced teams based on player skill levels (rated 1-5).
+Manage players and teams effectively.
+API endpoints for seamless integration with other applications.
+
+Features:
+
+1. Generate completely random teams from a provided player list.
+
+2. Create balanced teams based on player skill levels (rated 1-5).
+
+3. Manage players and teams effectively.
+
+4. API endpoints for seamless integration with other applications.
+
+5. User-friendly interface with real-time updates.
+
+6. Secure authentication for team management.
+
+
+
+### Built With
+
+This section should list any major frameworks/libraries Here are the list:
+
+* [![Next][Next.js]][https://nextjs.org/docs]
+* [![React][React.js]][(https://react.dev/)]
+* [![Tailwind][Tailwind CSS]][https://tailwindcss.com/]
+* [![MongoDB][Mongoose]][(https://www.mongodb.com/)]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Prerequisites
+
+First:
+
+- Node.js (v18+) & npm (v9) must be installed
+- Check your current node and npm version to make it compatible to go next steps further.
+
+### Installation
+
+_Below is the instruction to install the project._
+
+1. Clone the repo
+   
+
+sh
+   git clone https://github.com/Seema111/team-generator-app.git
+
+
+2. Install NPM packages
+   
+* npm
+  
+
+sh
+  npm install
+
+
+
+3. Create a persona .env file OR update env.local for use personally
+   
+
+js
+   MONGODB_URI="mongodbURL" <---MongoDB URI Link"--->
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+
+
+4. Run the Project using 
+   
+
+sh
+    npm run dev
+
+5. Check your Database connection using API
+   
+
+sh
+    http://localhost:3000/api/checkDb
+
+4. Run the Build of project
+   
+
+sh
+    npm run build
+
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+_For more details, please refer to the [Documentation](https://docs.google.com/document/d/1mgogjezMq0cg0FxM8ZZQZ__2Bm7r6XXGZSfplgWt-MU/edit?usp=sharing)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 

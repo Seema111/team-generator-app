@@ -3,7 +3,7 @@ import dbConnect from "@/database/dbConnect";
 import Player from "@/database/models/Player";
 import { Team } from "@/database/models/Team";
 import { Generate } from "@/database/models/Generate";
-import { IServerTeam, IServerPlayer, IServerGenerate } from "@/types";
+import { IServerTeam, IServerGenerate } from "@/types";
 import { generateBalancedTeams } from "@/app/utils/algorithm";
 import mongoose from "mongoose";
 import { v4 as uuidV4 } from "uuid";
@@ -29,7 +29,7 @@ function transformMatch(match: IServerGenerate) {
 export async function POST(request: Request): Promise<NextResponse> {
     try {
         await dbConnect();
-
+        
         const { title } = await request.json();
 
         if (!title || typeof title !== "string" || title.trim() === "") {
@@ -39,10 +39,12 @@ export async function POST(request: Request): Promise<NextResponse> {
             );
         }
 
-        const players: IServerPlayer[] = await Player.find({});
-        const numberOfTeams = await Team.countDocuments({});
+        const players = await Player.find({});
+        const existingTeams = await Team.find({}, { _id: 1, name: 1 });
+        
+        const numberOfTeams = existingTeams.length;
 
-        if (numberOfTeams < 2 && players.length < 2) {
+        if (numberOfTeams < 2 || players.length < 2) {
             return NextResponse.json(
                 { success: false, error: "At least 2 players and 2 teams must be added!" },
                 { status: 400 }
@@ -57,37 +59,34 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
 
         const balancedTeams = generateBalancedTeams(players, numberOfTeams);
-        const existingTeams = await Team.find({}, { name: 1 });
-        const existingTeamNames = existingTeams.map((team) => team.name);
-
+        
         const savedTeams = await Promise.all(
             balancedTeams.map(async (teamPlayers, index) => {
-                const teamName = existingTeamNames[index] || `Team ${index + 1}`;
-                const existingTeam = await Team.findOne({
-                    teamId: existingTeamIds[index],
-                })
-
+                const existingTeam = existingTeams[index];
+                
                 if (existingTeam) {
-                    existingTeam.players = teamPlayers;
-                    return await existingTeam.save();
+                    const team = await Team.findById(existingTeam._id);
+                    team.players = teamPlayers;
+                    return await team.save();
                 } else {
                     const newTeam = new Team({
-                        teamId: new mongoose.Types.ObjectId().toHexString(),
+                        _id: new mongoose.Types.ObjectId(),
                         id: uuidV4(),
-                        name: teamName,
+                        name: `Team ${index + 1}`,
                         players: teamPlayers,
                     });
                     return await newTeam.save();
                 }
             })
         );
-        const matchData: IServerGenerate = {
-            _id: new mongoose.Types.ObjectId().toHexString(),
+
+        const matchData = {
+            _id: new mongoose.Types.ObjectId(),
             matchId: new mongoose.Types.ObjectId().toHexString(),
             title,
             teamCount: savedTeams.length,
             playerCount: players.length,
-            balancedTeams: savedTeams
+            balancedTeams: savedTeams,
         };
 
         const match = new Generate(matchData);
@@ -97,15 +96,15 @@ export async function POST(request: Request): Promise<NextResponse> {
             {
                 success: true,
                 data: {
-                    match: transformMatch(match.toObject() as IServerGenerate),
-                    teams: savedTeams.map((team) => transformTeam(team.toObject() as IServerTeam)),
+                    match: transformMatch(match.toObject()),
+                    teams: savedTeams.map((team) => transformTeam(team.toObject())),
                 },
             },
             { status: 201 }
         );
     } catch (error) {
         return NextResponse.json(
-            { success: false, error: error },
+            { success: false, error: error || "Internal Server Error" },
             { status: 500 }
         );
     }
