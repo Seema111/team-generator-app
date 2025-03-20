@@ -40,27 +40,28 @@ const MatchLinkCopy = ({ matchId }: { matchId: string }) => {
             />
           </svg>
         </span>
-      </div>
-      <button
-        className="p-3 bg-blue-400 text-white cursor-pointer rounded-lg hover:bg-blue-600 transition duration-300"
-        title="Copy Link"
-        onClick={handleCopyLink} // Add click handler
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-7 w-7"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+        <div
+          role="presentation"
+          className="absolute right-0 cursor-pointer hover:bg-blue-300 hover:text-white inset-y-0 flex items-center p-2 pr-3 pl-3 rounded-lg"
+          title="Copy Link"
+          onClick={handleCopyLink}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-          />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
+          </svg>
+        </div>
+      </div>
     </div>
   );
 };

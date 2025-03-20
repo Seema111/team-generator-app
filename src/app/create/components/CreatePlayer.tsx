@@ -5,6 +5,8 @@ import { Key, useEffect, useReducer, useCallback } from "react";
 import { IPlayer } from "@/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { initialPlayerState, playerReducer } from "@/app/utils/reducer";
+import { renderStars } from "@/app/utils/renderStar";
+
 
 export default function CreatePlayer() {
   const [state, dispatch] = useReducer(playerReducer, initialPlayerState);
@@ -281,7 +283,7 @@ export default function CreatePlayer() {
                       </span>
 
                       <span className="flex-1 text-center min-w-0 mt-2 sm:mt-0">
-                        {player.skill}
+                        {renderStars(player.skill)}
                       </span>
                       <div className="flex-1 text-right mt-2 sm:mt-0 flex gap-2 justify-end">
                         <button
