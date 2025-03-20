@@ -28,7 +28,7 @@ export default function CreateTeam() {
         const teamsRes = await fetch(`${apiBaseUrl}/api/teams`);
 
         if (!teamsRes.ok) {
-          throw new Error("Failed to fetch players");
+          throw new Error("Failed to fetch teams");
         }
 
         const teamsData = await teamsRes.json();

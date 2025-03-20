@@ -8,6 +8,7 @@ function transformTeam(team: IServerTeam) {
     teamId: team._id,
     id: team.id,
     name: team.name,
+    players: team.players
   };
 }
 
@@ -40,7 +41,6 @@ export async function POST(request: Request): Promise<NextResponse> {
         { status: 400 }
       );
     }
-
     const existingTeam = await Team.findOne({ name });
     if (existingTeam) {
       return NextResponse.json(

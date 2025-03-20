@@ -5,7 +5,6 @@ export const playerSchema = new mongoose.Schema({
   id: {
     type: String,
     default: uuidV4,
-    unique: true,
   },
   name: {
     type: String,

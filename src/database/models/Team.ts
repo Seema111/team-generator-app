@@ -13,8 +13,6 @@ const teamSchema = new mongoose.Schema({
     required: true,
   },
   players: [playerSchema],
-}, {
-  timestamps: true,
 });
 
 export const Team = mongoose.models.Team || mongoose.model('Team', teamSchema);
