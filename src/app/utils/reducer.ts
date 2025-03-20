@@ -100,6 +100,8 @@ export function teamReducer(state: teamState, action: teamAction): teamState {
       return { ...state, isDeleteModalOpen: action.payload };
     case 'SET_TEAM_ID_TO_DELETE':
       return { ...state, teamIdToDelete: action.payload };
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
     default:
       return state;
   }
