@@ -103,7 +103,7 @@ export default function TeamsPage({
   }
 
   return (
-    <div className="relative w-full max-w-6xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 grid gap-6">
+    <div className="relative w-full max-w-6xl shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 grid gap-6">
       <header className="bg-yellow">
         <h2 className="text-4xl font-bold text-gray-800">{match.title}</h2>
         <p className="text-gray-600 mt-2 text-lg">
@@ -119,11 +119,11 @@ export default function TeamsPage({
 
           return (
             <div className="w-1/2 pt-2" key={team.teamId}>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-red-900 mb-4">
                 {team.name}
               </h3>
               <div className="mt-4">
-                <div className="hidden sm:flex justify-between items-center pl-3 pr-2 p-1 bg-gray-100 text-sm font-medium text-gray-700 border border-gray-200">
+                <div className="hidden sm:flex justify-between items-center pl-3 pr-2 p-2 bg-blue-500 text-sm font-bold text-white">
                   <span className="flex-1">S.N.</span>
                   <span className="flex-1">Name</span>
                   <span className="flex-1 text-center">Skill</span>
@@ -133,26 +133,26 @@ export default function TeamsPage({
                   {team.players.map((player, index) => (
                     <li
                       key={player.id}
-                      className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
+                      className="flex flex-col sm:flex-row justify-between items-center pl-4 pr-2 p-2  bg-gray-50 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-200 last:border-b-0"
                     >
-                      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
+                      <span className="flex-1 min-w-0 truncate text-center sm:text-left text-gray-700 font-semibold">
                         {index + 1})
                       </span>
-                      <span className="flex-1 min-w-0 truncate text-center sm:text-left">
+                      <span className="flex-1 min-w-0 truncate text-center sm:text-left text-gray-700 font-semibold">
                         {player.name}
                       </span>
-                      <span className="flex-1 min-w-0 truncate text-center sm:text-center">
+                      <span className="flex-1 min-w-0 truncate text-center sm:text-center text-blue-800 font-semibold">
                         {player.skill}
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-gray-50 text-gray-700 border border-gray-200 border-t-0">
+                <div className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-2 bg-blue-100 text-gray-700">
                   <span className="flex-2 min-w-0 truncate text-center sm:text-left font-medium">
                     Total
                   </span>
-                  <span className="flex-1 min-w-0 truncate text-center sm:text-center">
+                  <span className="flex-1 min-w-0 truncate text-center sm:text-center font-semibold text-blue-800">
                     {totalSkillValue}
                   </span>
                 </div>
