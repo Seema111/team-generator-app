@@ -17,6 +17,7 @@ export default function CreateTeam() {
     error,
     isDeleteModalOpen,
     teamIdToDelete,
+    isLoading,
   } = state;
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -38,6 +39,8 @@ export default function CreateTeam() {
           type: "SET_ERROR",
           payload: "Failed to fetch teams, try again later.",
         });
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
@@ -262,7 +265,7 @@ export default function CreateTeam() {
                   ))
                 ) : (
                   <li className="p-3 bg-white rounded-md text-gray-500 text-center border border-gray-200">
-                    No teams added yet.
+                    {isLoading ? "Loading..." : "No teams added yet."}
                   </li>
                 )}
               </ul>
