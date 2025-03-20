@@ -37,8 +37,6 @@ This section should list any major frameworks/libraries Here are the list:
 * [![Tailwind][Tailwind CSS]][https://tailwindcss.com/]
 * [![MongoDB][Mongoose]][(https://www.mongodb.com/)]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 ### Prerequisites
 
@@ -53,8 +51,6 @@ _Below is the instruction to install the project._
 
 1. Clone the repo
    
-
-sh
    git clone https://github.com/Seema111/team-generator-app.git
 
 
@@ -62,50 +58,33 @@ sh
    
 * npm
   
-
-sh
   npm install
 
 
 
 3. Create a persona .env file OR update env.local for use personally
    
-
-js
    MONGODB_URI="mongodbURL" <---MongoDB URI Link"--->
    NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
 
 
 4. Run the Project using 
    
-
-sh
     npm run dev
 
 5. Check your Database connection using API
    
-
-sh
     http://localhost:3000/api/checkDb
 
 4. Run the Build of project
    
-
-sh
     npm run build
-
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
 _For more details, please refer to the [Documentation](https://docs.google.com/document/d/1mgogjezMq0cg0FxM8ZZQZ__2Bm7r6XXGZSfplgWt-MU/edit?usp=sharing)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
