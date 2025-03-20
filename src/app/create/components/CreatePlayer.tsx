@@ -60,7 +60,7 @@ export default function CreatePlayer() {
         const body = JSON.stringify(
           editIndex !== null
             ? {
-                id: players[editIndex].playerId,
+                id: players[editIndex].id,
                 name: playerName,
                 skill: selectedSkill,
               }
@@ -144,7 +144,7 @@ export default function CreatePlayer() {
       dispatch({
         type: "SET_PLAYERS",
         payload: state.players.filter(
-          (player) => player.playerId !== playerIdToDelete
+          (player) => player.id !== playerIdToDelete
         ),
       });
       dispatch({ type: "SET_DELETE_MODAL_OPEN", payload: false });
@@ -294,7 +294,7 @@ export default function CreatePlayer() {
                         </button>
 
                         <button
-                          onClick={() => handleDeleteClick(player.playerId)}
+                          onClick={() => handleDeleteClick(player.id)}
                           className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
                         >
                           <svg

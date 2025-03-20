@@ -10,7 +10,6 @@ export interface Player {
 }
 
 export interface Team {
-  teamId: string;
   id: string;
   name: string;
   players: IPlayer[];

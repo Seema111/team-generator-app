@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { playerSchema } from "./Player";
 
 const generateSchema = new mongoose.Schema({
     matchId: {
@@ -21,10 +20,9 @@ const generateSchema = new mongoose.Schema({
     },
     balancedTeams: [
         {
-            teamId: String,
             id: String,
             name: String,
-            players: [playerSchema],
+            players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }],
         },
     ],
 });

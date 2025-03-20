@@ -1,6 +1,5 @@
 export interface IPlayer {
     id: string;
-    playerId: string;
     name: string;
     skill: number;
 }
@@ -26,7 +25,6 @@ export interface IServerGenerate {
 
 export interface ITeam {
     id: string;
-    teamId: string;
     name: string;
 }
 

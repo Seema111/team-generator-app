@@ -5,8 +5,7 @@ import { IServerTeam } from "@/types";
 
 function transformTeam(team: IServerTeam) {
   return {
-    teamId: team._id,
-    id: team.id,
+    id: team._id,
     name: team.name,
     players: team.players
   };

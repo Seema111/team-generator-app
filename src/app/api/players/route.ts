@@ -7,8 +7,7 @@ import dbConnect from "@/database/dbConnect";
 
 function transformPlayer(player: IServerPlayer) {
     return {
-        playerId: player._id.toString(),
-        id: player.id,
+        id: player._id.toString(),
         name: player.name,
         skill: player.skill,
     };

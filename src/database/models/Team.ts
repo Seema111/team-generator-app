@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
-import { playerSchema } from './Player';
 
 const teamSchema = new mongoose.Schema({
   id: {
@@ -12,7 +11,8 @@ const teamSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  players: [playerSchema],
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }],
 });
+
 
 export const Team = mongoose.models.Team || mongoose.model('Team', teamSchema);

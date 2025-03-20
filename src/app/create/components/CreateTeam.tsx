@@ -65,7 +65,7 @@ export default function CreateTeam() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: teamToUpdate.teamId,
+            id: teamToUpdate.id,
             name: teamName,
           }),
         });
@@ -136,7 +136,7 @@ export default function CreateTeam() {
 
       dispatch({
         type: "SET_TEAMS",
-        payload: teams.filter((team) => team.teamId !== teamIdToDelete),
+        payload: teams.filter((team) => team.id !== teamIdToDelete),
       });
       handleDeleteCancel();
     } catch (error) {
@@ -230,7 +230,7 @@ export default function CreateTeam() {
                 {teams.length > 0 ? (
                   teams.map((team: ITeam, index) => (
                     <li
-                      key={team.teamId}
+                      key={team.id}
                       className="flex flex-col sm:flex-row justify-between items-center pl-3 pr-2 p-1 bg-white text-gray-700 border border-gray-200 border-t-0"
                     >
                       <span className="flex-1 min-w-0 truncate text-center sm:text-left">
@@ -244,7 +244,7 @@ export default function CreateTeam() {
                           <FaEdit className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(team.teamId)}
+                          onClick={() => handleDeleteClick(team.id)}
                           className="p-1 text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none flex-shrink-0"
                         >
                           <svg

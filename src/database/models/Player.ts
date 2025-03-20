@@ -5,6 +5,7 @@ export const playerSchema = new mongoose.Schema({
   id: {
     type: String,
     default: uuidV4,
+    unique: true,
   },
   name: {
     type: String,
@@ -12,6 +13,8 @@ export const playerSchema = new mongoose.Schema({
   },
   skill: {
     type: Number,
+    min: 1,
+    max: 5,
     required: true,
   },
 });

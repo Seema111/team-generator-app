@@ -10,8 +10,7 @@ import { v4 as uuidV4 } from "uuid";
 
 function transformTeam(team: IServerTeam) {
     return {
-        teamId: team._id,
-        id: team.id,
+        id: team._id,
         name: team.name,
         players: team.players,
     };
@@ -20,7 +19,6 @@ function transformTeam(team: IServerTeam) {
 function transformMatch(match: IServerGenerate) {
     return {
         matchId: match.matchId,
-        id: match.matchId,
         title: match.title,
         teamCount: match.teamCount,
     };
@@ -139,14 +137,12 @@ export async function GET(request: Request): Promise<NextResponse> {
                 data: {
                     match: {
                         matchId: match.matchId,
-                        id: match.matchId,
                         title: match.title,
                         teamCount: match.teamCount,
                         playerCount: match.playerCount
                     },
                     teams: match.balancedTeams.map((team: IServerTeam) => ({
-                        teamId: team._id,
-                        id: team.id,
+                        id: team._id,
                         name: team.name,
                         players: team?.players,
                     })),
