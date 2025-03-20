@@ -62,17 +62,18 @@ _Below is the instruction to install the project._
 
 
 
-3. Create a persona .env file OR update env.local for use personally
+3. Create a persona .env file OR update env.local to use personally
    
    MONGODB_URI="mongodbURL" <---MongoDB URI Link"--->
+   
    NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
 
 
-4. Run the Project using 
+5. Run the Project using 
    
     npm run dev
 
-5. Check your Database connection using API
+6. Check your Database connection using API
    
     http://localhost:3000/api/checkDb
 
