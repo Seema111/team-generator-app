@@ -60,6 +60,7 @@ export type teamState = {
   error: string | null;
   isDeleteModalOpen: boolean;
   teamIdToDelete: string | null;
+  isLoading: boolean;
 };
 
 export type teamAction =
@@ -69,7 +70,8 @@ export type teamAction =
   | { type: 'SET_IS_SUBMITTING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_IS_DELETE_MODAL_OPEN'; payload: boolean }
-  | { type: 'SET_TEAM_ID_TO_DELETE'; payload: string | null };
+  | { type: 'SET_TEAM_ID_TO_DELETE'; payload: string | null }
+  | { type: "SET_LOADING", payload: boolean };
 
 export const initialTeamState: teamState = {
   teams: [],
@@ -79,6 +81,7 @@ export const initialTeamState: teamState = {
   error: null,
   isDeleteModalOpen: false,
   teamIdToDelete: null,
+  isLoading: true,
 };
 
 export function teamReducer(state: teamState, action: teamAction): teamState {
