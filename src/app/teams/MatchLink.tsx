@@ -22,7 +22,7 @@ const MatchLinkCopy = ({ matchId }: { matchId: string }) => {
           type="text"
           value={`${window.location.origin}/teams/${matchId}`}
           disabled
-          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 text-md"
+          className="w-full pl-12 pr-15 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 text-sm"
         />
         <span className="absolute inset-y-0 left-0 flex items-center pl-4">
           <svg
