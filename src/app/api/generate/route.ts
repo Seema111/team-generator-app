@@ -63,16 +63,24 @@ export async function POST(request: Request): Promise<NextResponse> {
         const savedTeams = await Promise.all(
             balancedTeams.map(async (teamPlayers, index) => {
                 const teamName = existingTeamNames[index] || `Team ${index + 1}`;
-                const team = new Team({
-                    teamId: new mongoose.Types.ObjectId().toHexString(),
-                    id: uuidV4(),
-                    name: teamName,
-                    players: teamPlayers,
-                });
-                return await team.save();
+                const existingTeam = await Team.findOne({
+                    teamId: existingTeamIds[index],
+                })
+
+                if (existingTeam) {
+                    existingTeam.players = teamPlayers;
+                    return await existingTeam.save();
+                } else {
+                    const newTeam = new Team({
+                        teamId: new mongoose.Types.ObjectId().toHexString(),
+                        id: uuidV4(),
+                        name: teamName,
+                        players: teamPlayers,
+                    });
+                    return await newTeam.save();
+                }
             })
         );
-
         const matchData: IServerGenerate = {
             _id: new mongoose.Types.ObjectId().toHexString(),
             matchId: new mongoose.Types.ObjectId().toHexString(),
