@@ -24,8 +24,6 @@ Features:
 
 5. User-friendly interface with real-time updates.
 
-6. Secure authentication for team management.
-
 
 
 ### Built With
