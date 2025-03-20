@@ -4,7 +4,7 @@ import CreateMatch from "./components/CreateMatch";
 
 const CreatePage = async () => {
   return (
-    <div className="relative w-full max-w-6xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
+    <div className="relative w-full max-w-7xl bg-white shadow-lg inset-shadow-2xs rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
       <CreatePlayer />
       <CreateTeam />
       <CreateMatch />
