@@ -32,10 +32,10 @@ Features:
 
 This section should list any major frameworks/libraries Here are the list:
 
-* [![Next][Next.js]][https://nextjs.org/docs]
-* [![React][React.js]][(https://react.dev/)]
-* [![Tailwind][Tailwind CSS]][https://tailwindcss.com/]
-* [![MongoDB][Mongoose]][(https://www.mongodb.com/)]
+* [Next.js][https://nextjs.org/docs]
+* [React.js][(https://react.dev/)]
+* [Tailwind CSS][https://tailwindcss.com/]
+* [Mongoose][(https://www.mongodb.com/)]
 
 
 ### Prerequisites
